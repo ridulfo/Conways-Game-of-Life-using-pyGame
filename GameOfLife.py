@@ -50,10 +50,11 @@ def countNeighbours(grid, x, y):
     """
     count = 0
     for dx in range(x-1, (x+1)+1):
+        dx %= grid.shape[0] #To connect edges instead of clipping
         if dx<0 or dx>grid.shape[0]-1: continue
 
         for dy in range(y-1, (y+1)+1):
-            if dy<0 or dy>grid.shape[1]-1: continue
+            dy %= grid.shape[1] #To connect top and bottom
             if dx == x and dy == y: continue
 
             if grid[dy][dx]==1:
