@@ -1,6 +1,7 @@
 import pygame as pg
 import numpy as np
 import time
+import numba as nb
 
 class Life:
     """
@@ -14,37 +15,15 @@ class Life:
     def __str__(self):
         return str(self.grid)
 
-    def _countNeighbours(self, x, y):
-        """
-        Counts the neighbours around the given cell.
-        If the cell is on the edge, only the neighbours on the grid will be counted.
-        """
-        count = 0
-        for dx in range(x-1, (x+1)+1):
-            if dx<0 or dx>self.COLUMNS-1: continue
-
-            for dy in range(y-1, (y+1)+1):
-                if dy<0 or dy>self.ROWS-1: continue
-                if dx == x and dy == y: continue
-
-                if self.grid[dy][dx]==1:
-                    count += 1
-        return count
+    
 
     def nextGeneration(self):
         """
         Generates a new generation from the current one given the standard game rules.
         """
         newGrid = np.zeros((self.COLUMNS, self.ROWS))
-        for y in range(self.COLUMNS):
-            for x in range(self.ROWS):
-                count = self._countNeighbours(x,y)
-                if self.grid[y][x]==1:
-                    if count==2 or count == 3:
-                        newGrid[y][x] = 1
-                else: #dead but can come alive
-                    if count ==3:
-                        newGrid[y][x] = 1
+        nextGenerationCalculation(self.grid, newGrid)
+
         self.grid = newGrid
 
     def randomize(self):
@@ -52,10 +31,39 @@ class Life:
         Creates a random grid.
         """
         self.grid = np.random.randint(0,2,(self.COLUMNS, self.ROWS))
+@nb.njit
+def nextGenerationCalculation(oldGrid, newGrid):
+    for y in range(oldGrid.shape[0]):
+        for x in range(oldGrid.shape[1]):
+            count = countNeighbours(oldGrid, x,y)
+            if oldGrid[y][x]==1:
+                if count==2 or count == 3:
+                    newGrid[y][x] = 1
+            else: #dead but can come alive
+                if count ==3:
+                    newGrid[y][x] = 1
+@nb.njit                   
+def countNeighbours(grid, x, y):
+    """
+    Counts the neighbours around the given cell.
+    If the cell is on the edge, only the neighbours on the grid will be counted.
+    """
+    count = 0
+    for dx in range(x-1, (x+1)+1):
+        if dx<0 or dx>grid.shape[0]-1: continue
+
+        for dy in range(y-1, (y+1)+1):
+            if dy<0 or dy>grid.shape[1]-1: continue
+            if dx == x and dy == y: continue
+
+            if grid[dy][dx]==1:
+                count += 1
+    return count
+
 
 if __name__ == "__main__":
-    ROWS = 100
-    COLUMNS = 100
+    ROWS = 200
+    COLUMNS = 200
     squareSide = 1000/ROWS
     life = Life(ROWS, COLUMNS)
     life.randomize()
