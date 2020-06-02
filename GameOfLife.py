@@ -51,45 +51,56 @@ def countNeighbours(grid, x, y):
     count = 0
     for dx in range(x-1, (x+1)+1):
         dx %= grid.shape[0] #To connect edges instead of clipping
-        if dx<0 or dx>grid.shape[0]-1: continue
 
         for dy in range(y-1, (y+1)+1):
             dy %= grid.shape[1] #To connect top and bottom
             if dx == x and dy == y: continue
 
-            if grid[dy][dx]==1:
-                count += 1
+            count += grid[dy][dx]
     return count
 
 
 if __name__ == "__main__":
+    import os
+    #Always center the game window
+    os.environ['SDL_VIDEO_CENTERED'] = '1'
+    
+    WIN_SIZE = 1000
     ROWS = 200
     COLUMNS = 200
-    squareSide = 1000/ROWS
+    squareSide = WIN_SIZE/ROWS
     life = Life(ROWS, COLUMNS)
     life.randomize()
 
     pg.init()
     pg.font.init()
     font = pg.font.SysFont('Comic Sans MS', 30)
+    
+    timer = pg.time.Clock() #Time control with pygame
 
-    display: pg.display = pg.display.set_mode((1000, 1000))
+    display: pg.display = pg.display.set_mode((WIN_SIZE, WIN_SIZE))
     
     running = True
-    lastTime = time.time()
+    
     while running:
         display.fill((0, 0, 0))
-        for event in pg.event.get():
+        for event in pg.event.get([pg.QUIT,]): #Limit events to only QUIT event
+            print('Ending Simulation...')
             if event.type == pg.QUIT:
                 running = False
-        for row in range(ROWS):
-            for column in range(COLUMNS):
-                if life.grid[column][row]==1:
-                    pg.draw.rect(display, (255, 255, 255), (squareSide*column, squareSide*row, squareSide, squareSide))
+                
+        game_surf = pg.surfarray.make_surface(life.grid) #Create surface from array
+        game_surf = pg.transform.scale(game_surf, (WIN_SIZE, WIN_SIZE)) #Scale surface to display
+        display.blit(game_surf, (0, 0)) #Show surface
         
-        text = font.render(f"FPS: {round(1/(time.time()-lastTime))}",True, (255,255,255))
-        lastTime = time.time()
+        text = font.render(f"FPS: {round(timer.get_fps())}",True, (255,255,255))
         display.blit(text, (0,0))
-        pg.display.update()
+        
+        pg.display.flip()
         life.nextGeneration()
+        
+        timer.tick(60) #Limit to 60 FPS
+    pg.quit()
+
+
 
