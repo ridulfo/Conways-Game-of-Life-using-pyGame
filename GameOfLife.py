@@ -83,11 +83,9 @@ if __name__ == "__main__":
             if event.type == pg.QUIT:
                 running = False
                 
-        pythonGrid = life.grid.tolist()
-        for row in range(ROWS):
-            for column in range(COLUMNS):
-                if pythonGrid[column][row]==1:
-                    pg.draw.rect(display, (255, 255, 255), (squareSide*column, squareSide*row, squareSide, squareSide))
+        game_surf = pg.surfarray.make_surface(life.grid*255)
+        game_surf = pg.transform.scale(game_surf, (1000, 1000))
+        display.blit(game_surf, (0, 0))
         
         text = font.render(f"FPS: {round(1/(time.time()-lastTime))}",True, (255,255,255))
         lastTime = time.time()
