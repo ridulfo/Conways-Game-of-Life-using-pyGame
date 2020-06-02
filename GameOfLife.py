@@ -82,9 +82,11 @@ if __name__ == "__main__":
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
+                
+        pythonGrid = life.grid.tolist()
         for row in range(ROWS):
             for column in range(COLUMNS):
-                if life.grid[column][row]==1:
+                if pythonGrid[column][row]==1:
                     pg.draw.rect(display, (255, 255, 255), (squareSide*column, squareSide*row, squareSide, squareSide))
         
         text = font.render(f"FPS: {round(1/(time.time()-lastTime))}",True, (255,255,255))
