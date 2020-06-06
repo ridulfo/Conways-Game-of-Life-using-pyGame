@@ -85,7 +85,7 @@ if __name__ == "__main__":
             if event.type == pg.QUIT:
                 running = False
                 
-        game_surf = pg.surfarray.make_surface(life.grid*255)
+        game_surf = pg.surfarray.make_surface(life.grid * 127)
         game_surf = pg.transform.scale(game_surf, (WIN_SIZE, WIN_SIZE))
         display.blit(game_surf, (0, 0))
         
