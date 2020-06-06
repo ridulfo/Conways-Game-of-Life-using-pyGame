@@ -65,15 +65,17 @@ def countNeighbours(grid, x, y):
 if __name__ == "__main__":
     ROWS = 200
     COLUMNS = 200
-    squareSide = 1000/ROWS
+    
     life = Life(ROWS, COLUMNS)
     life.randomize()
+
+    WIN_SIZE = 1000
 
     pg.init()
     pg.font.init()
     font = pg.font.SysFont('Comic Sans MS', 30)
 
-    display: pg.display = pg.display.set_mode((1000, 1000))
+    display: pg.display = pg.display.set_mode((WIN_SIZE, WIN_SIZE))
     
     running = True
     lastTime = time.time()
@@ -84,7 +86,7 @@ if __name__ == "__main__":
                 running = False
                 
         game_surf = pg.surfarray.make_surface(life.grid*255)
-        game_surf = pg.transform.scale(game_surf, (1000, 1000))
+        game_surf = pg.transform.scale(game_surf, (WIN_SIZE, WIN_SIZE))
         display.blit(game_surf, (0, 0))
         
         text = font.render(f"FPS: {round(1/(time.time()-lastTime))}",True, (255,255,255))
