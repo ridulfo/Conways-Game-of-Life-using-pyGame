@@ -5,9 +5,5 @@ SDL_FLAGS = -I/opt/homebrew/Cellar/sdl2/2.28.5/include -L/opt/homebrew/Cellar/sd
 
 all: main
 
-main: main.c shapes.o
-	$(CC) $(CFLAGS) $(SDL_FLAGS) -o main main.c shapes.o
-
-shapes.o: shapes.c
-	$(CC) $(CFLAGS) $(SDL_FLAGS) -o shapes.o -c shapes.c
-
+main: main.c
+	$(CC) $(CFLAGS) $(SDL_FLAGS) -o main main.c
